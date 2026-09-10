@@ -24,7 +24,7 @@ fn main() {
         if window.is_key_down(Key::Left) { player.vx -= speed; }
         if window.is_key_down(Key::Right) { player.vx += speed; }
         if window.is_key_down(Key::Up) { player.vx -= speed; }
-        if window.is_key_down(Key::Down) { player.vx -= speed; }
+        if window.is_key_down(Key::Down) { player.vx += speed; }
 
         player.x += player.vx * dt;
         player.y += player.vy * dt;
