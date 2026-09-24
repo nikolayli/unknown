@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-minifb = { version = "0.28.0", default-features = false, features = ["wayland"] }
+minifb = "0.28.0"

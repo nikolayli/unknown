@@ -1,7 +1,7 @@
 use minifb::{Key, Window, WindowOptions};
 
-const W: usize = 320;
-const H: usize = 240;
+const W: usize = 640;
+const H: usize = 480;
 
 struct Rect { x: f32, y: f32, w: f32, h: f32, vx: f32, vy: f32 }
 
@@ -10,7 +10,7 @@ fn main() {
     window.set_target_fps(60);
 
     let mut buf = vec![0u32; W * H];
-    let mut player = Rect { x: 100.0, y: 100.0, w: 40.0, h: 30.0, vx: 0.0, vy: 0.0 };
+    let mut player = Rect { x: 320.0, y: 240.0, w: 40.0, h: 30.0, vx: 0.0, vy: 0.0 };
 
     let mut last = std::time::Instant::now();
 
@@ -23,8 +23,8 @@ fn main() {
         player.vx = 0.0; player.vy = 0.0;
         if window.is_key_down(Key::Left) { player.vx -= speed; }
         if window.is_key_down(Key::Right) { player.vx += speed; }
-        if window.is_key_down(Key::Up) { player.vx -= speed; }
-        if window.is_key_down(Key::Down) { player.vx += speed; }
+        if window.is_key_down(Key::Up) { player.vy -= speed; }
+        if window.is_key_down(Key::Down) { player.vy += speed; }
 
         player.x += player.vx * dt;
         player.y += player.vy * dt;

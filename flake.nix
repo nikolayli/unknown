@@ -3,42 +3,47 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, utils }:
-    utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
+  outputs =
+    { nixpkgs, ... }:
+    let
+      forAllSystems = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
+    in
+    {
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
 
-        runtimeLibs = with pkgs; [
-          wayland
-          libxkbcommon
-
-          libX11
-          libXcursor
-          libXrandr
-          libXi
-          libXxf86vm
-          libGL
-          vulkan-loader
-        ];
-      in
-      {
-        devShells.default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
-            pkg-config
-            cargo
-            rustc
+          runtimeLibs = with pkgs; [
+            wayland
+            libxkbcommon
+            xorg.libX11
+            xorg.libXcursor
+            libGL
           ];
+        in
+        {
+          default = pkgs.mkShell {
+            nativeBuildInputs = with pkgs; [
+              pkg-config
+              cargo
+              rustc
+            ];
 
-          buildInputs = runtimeLibs ++ (with pkgs; [ glibcLocales ]);
+            buildInputs = runtimeLibs;
 
-          shellHook = ''
-            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath runtimeLibs}:$LD_LIBRARY_PATH"
-            export DISPLAY="''${DISPLAY:-:0}"
-          '';
-        };
-      }
-    );
+            shellHook = ''
+              export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath runtimeLibs}:$LD_LIBRARY_PATH"
+            '';
+          };
+        }
+      );
+    };
 }
