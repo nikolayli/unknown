@@ -1,0 +1,31 @@
+pub struct Position { pub x: f32, pub y: f32 }
+pub struct Velocity { pub x: f32, pub y: f32 }
+pub struct Sprite { pub w: f32, pub h: f32, pub color: u32 }
+pub struct PlayerControlled;
+
+pub struct World {
+    pub positions: Vec<Option<Position>>,
+    pub velocities: Vec<Option<Velocity>>,
+    pub sprites: Vec<Option<Sprite>>,
+    pub players: Vec<Option<PlayerControlled>>,
+}
+
+impl World {
+    pub fn new() -> Self {
+        Self {
+            positions: Vec::new(),
+            velocities: Vec::new(),
+            sprites: Vec::new(),
+            players: Vec::new(),
+        }
+    }
+
+    pub fn create_entity(&mut self) -> usize {
+        let id = self.positions.len();
+        self.positions.push(None);
+        self.velocities.push(None);
+        self.sprites.push(None);
+        self.players.push(None);
+        id
+    }
+}
