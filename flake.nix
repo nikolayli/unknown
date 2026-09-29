@@ -24,8 +24,8 @@
           runtimeLibs = with pkgs; [
             wayland
             libxkbcommon
-            xorg.libX11
-            xorg.libXcursor
+            libX11
+            libXcursor
             libGL
           ];
         in

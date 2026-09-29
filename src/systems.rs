@@ -23,14 +23,13 @@ pub fn movement_system(world: &mut World, dt: f32) {
 
     for id in 0..count {
         if let (Some(vel), Some(sprite)) = (&world.velocities[id], &world.sprites[id]) {
-            let w = sprite.w;
-            let h = sprite.h;
+            let w = sprite.w as f32;
+            let h = sprite.h as f32;
             let vx = vel.x;
             let vy = vel.y;
 
             if let Some(pos) = &mut world.positions[id] {
                 pos.x += vx * dt;
-
                 pos.x = pos.x.clamp(0.0, W as f32 - w);
             }
 
@@ -45,10 +44,13 @@ pub fn movement_system(world: &mut World, dt: f32) {
                     if let (Some(pos), Some(wall_pos), Some(wall_sprite)) =
                         (&world.positions[id], &world.positions[other_id], &world.sprites[other_id])
                     {
-                        if check_aabb(pos.x, pos.y, w, h, wall_pos.x, wall_pos.y, wall_sprite.w, wall_sprite.h) {
+                        let ww = wall_sprite.w as f32;
+                        let wh = wall_sprite.h as f32;
+
+                        if check_aabb(pos.x, pos.y, w, h, wall_pos.x, wall_pos.y, ww, wh) {
                             collision = true;
                             wall_x = wall_pos.x;
-                            wall_w = wall_sprite.w;
+                            wall_w = ww;
                         }
                     }
 
@@ -81,10 +83,13 @@ pub fn movement_system(world: &mut World, dt: f32) {
                     if let (Some(pos), Some(wall_pos), Some(wall_sprite)) =
                         (&world.positions[id], &world.positions[other_id], &world.sprites[other_id])
                     {
-                        if check_aabb(pos.x, pos.y, w, h, wall_pos.x, wall_pos.y, wall_sprite.w, wall_sprite.h) {
+                        let ww = wall_sprite.w as f32;
+                        let wh = wall_sprite.h as f32;
+
+                        if check_aabb(pos.x, pos.y, w, h, wall_pos.x, wall_pos.y, ww, wh) {
                             collision = true;
                             wall_y = wall_pos.y;
-                            wall_h = wall_sprite.h;
+                            wall_h = wh;
                         }
                     }
 
@@ -106,19 +111,31 @@ pub fn movement_system(world: &mut World, dt: f32) {
 pub fn render_system(world: &World, buf: &mut [u32]) {
     for id in 0..world.positions.len() {
         if let (Some(pos), Some(sprite)) = (&world.positions[id], &world.sprites[id]) {
-            draw_rect(buf, pos.x, pos.y, sprite.w, sprite.h, sprite.color);
+            draw_sprite(buf, pos.x, pos.y, sprite);
         }
     }
 }
 
-fn draw_rect(buf: &mut [u32], rx: f32, ry: f32, rw: f32, rh: f32, color: u32) {
-    let x0 = rx.max(0.0) as usize;
-    let y0 = ry.max(0.0) as usize;
-    let x1 = ((rx + rw) as usize).min(W);
-    let y1 = ((ry + rh) as usize).min(H);
-    for y in y0..y1 {
-        for x in x0..x1 {
-            buf[y * W + x] = color;
+fn draw_sprite(buf: &mut [u32], rx: f32, ry: f32, sprite: &crate::ecs::Sprite) {
+    let start_x = rx.round() as i32;
+    let start_y = ry.round() as i32;
+
+    for sy in 0..sprite.h {
+        let screen_y = start_y + sy as i32;
+        if screen_y < 0 || screen_y >= H as i32 { continue; }
+
+        for sx in 0..sprite.w {
+            let screen_x = start_x + sx as i32;
+            if screen_x < 0 || screen_x >= W as i32 { continue; }
+
+            let pixel = sprite.pixels[sy * sprite.w + sx];
+
+            let alpha = (pixel >> 24) & 0xFF;
+            if alpha == 0 {
+                continue;
+            }
+
+            buf[screen_y as usize * W + screen_x as usize] = pixel;
         }
     }
 }

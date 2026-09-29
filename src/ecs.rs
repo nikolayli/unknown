@@ -1,8 +1,13 @@
 pub struct Position { pub x: f32, pub y: f32 }
 pub struct Velocity { pub x: f32, pub y: f32 }
-pub struct Sprite { pub w: f32, pub h: f32, pub color: u32 }
 pub struct PlayerControlled;
 pub struct Collider;
+
+pub struct Sprite {
+    pub w: usize,
+    pub h: usize,
+    pub pixels: Vec<u32>,
+}
 
 pub struct World {
     pub positions: Vec<Option<Position>>,
