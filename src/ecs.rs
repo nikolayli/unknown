@@ -2,12 +2,14 @@ pub struct Position { pub x: f32, pub y: f32 }
 pub struct Velocity { pub x: f32, pub y: f32 }
 pub struct Sprite { pub w: f32, pub h: f32, pub color: u32 }
 pub struct PlayerControlled;
+pub struct Collider;
 
 pub struct World {
     pub positions: Vec<Option<Position>>,
     pub velocities: Vec<Option<Velocity>>,
     pub sprites: Vec<Option<Sprite>>,
     pub players: Vec<Option<PlayerControlled>>,
+    pub colliders: Vec<Option<Collider>>,
 }
 
 impl World {
@@ -17,6 +19,7 @@ impl World {
             velocities: Vec::new(),
             sprites: Vec::new(),
             players: Vec::new(),
+            colliders: Vec::new(),
         }
     }
 
@@ -26,6 +29,7 @@ impl World {
         self.velocities.push(None);
         self.sprites.push(None);
         self.players.push(None);
+        self.colliders.push(None);
         id
     }
 }

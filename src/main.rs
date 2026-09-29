@@ -5,7 +5,7 @@ mod ecs;
 mod systems;
 
 use constants::{W, H};
-use ecs::{World, Position, Velocity, Sprite, PlayerControlled};
+use ecs::{World, Position, Velocity, Sprite, PlayerControlled, Collider};
 
 fn main() {
     let mut window = Window::new("g0", W, H, WindowOptions::default()).unwrap();
@@ -25,6 +25,7 @@ fn main() {
     let box_id = world.create_entity();
     world.positions[box_id] = Some(Position { x: 100.0, y: 100.0 });
     world.sprites[box_id] = Some(Sprite { w: 50.0, h: 50.0, color: 0xFF0000 });
+    world.colliders[box_id] = Some(Collider);
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
         let now = std::time::Instant::now();
