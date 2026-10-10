@@ -5,8 +5,8 @@ mod constants;
 mod ecs;
 mod systems;
 
-use constants::{W, H};
-use ecs::{World, Position, Velocity, Sprite, PlayerControlled, Collider};
+use constants::{H, W};
+use ecs::{Collider, PlayerControlled, Position, Sprite, Velocity, World};
 
 fn load_sprite_from_png<P: AsRef<Path>>(path: P) -> Sprite {
     let img = image::open(path)

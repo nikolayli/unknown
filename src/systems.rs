@@ -1,6 +1,6 @@
-use minifb::{Key, Window};
-use crate::constants::{W, H};
+use crate::constants::{H, W};
 use crate::ecs::World;
+use minifb::{Key, Window};
 
 pub fn input_system(world: &mut World, window: &Window) {
     let speed = 200.0;
@@ -9,10 +9,18 @@ pub fn input_system(world: &mut World, window: &Window) {
             if let Some(vel) = &mut world.velocities[id] {
                 vel.x = 0.0;
                 vel.y = 0.0;
-                if window.is_key_down(Key::Left)  { vel.x -= speed; }
-                if window.is_key_down(Key::Right) { vel.x += speed; }
-                if window.is_key_down(Key::Up)    { vel.y -= speed; }
-                if window.is_key_down(Key::Down)  { vel.y += speed; }
+                if window.is_key_down(Key::Left) {
+                    vel.x -= speed;
+                }
+                if window.is_key_down(Key::Right) {
+                    vel.x += speed;
+                }
+                if window.is_key_down(Key::Up) {
+                    vel.y -= speed;
+                }
+                if window.is_key_down(Key::Down) {
+                    vel.y += speed;
+                }
             }
         }
     }
@@ -34,16 +42,20 @@ pub fn movement_system(world: &mut World, dt: f32) {
             }
 
             for other_id in 0..count {
-                if id == other_id { continue; }
+                if id == other_id {
+                    continue;
+                }
 
                 if world.colliders[other_id].is_some() {
                     let mut collision = false;
                     let mut wall_x = 0.0;
                     let mut wall_w = 0.0;
 
-                    if let (Some(pos), Some(wall_pos), Some(wall_sprite)) =
-                        (&world.positions[id], &world.positions[other_id], &world.sprites[other_id])
-                    {
+                    if let (Some(pos), Some(wall_pos), Some(wall_sprite)) = (
+                        &world.positions[id],
+                        &world.positions[other_id],
+                        &world.sprites[other_id],
+                    ) {
                         let ww = wall_sprite.w as f32;
                         let wh = wall_sprite.h as f32;
 
@@ -73,16 +85,20 @@ pub fn movement_system(world: &mut World, dt: f32) {
             }
 
             for other_id in 0..count {
-                if id == other_id { continue; }
+                if id == other_id {
+                    continue;
+                }
 
                 if world.colliders[other_id].is_some() {
                     let mut collision = false;
                     let mut wall_y = 0.0;
                     let mut wall_h = 0.0;
 
-                    if let (Some(pos), Some(wall_pos), Some(wall_sprite)) =
-                        (&world.positions[id], &world.positions[other_id], &world.sprites[other_id])
-                    {
+                    if let (Some(pos), Some(wall_pos), Some(wall_sprite)) = (
+                        &world.positions[id],
+                        &world.positions[other_id],
+                        &world.sprites[other_id],
+                    ) {
                         let ww = wall_sprite.w as f32;
                         let wh = wall_sprite.h as f32;
 
@@ -122,11 +138,15 @@ fn draw_sprite(buf: &mut [u32], rx: f32, ry: f32, sprite: &crate::ecs::Sprite) {
 
     for sy in 0..sprite.h {
         let screen_y = start_y + sy as i32;
-        if screen_y < 0 || screen_y >= H as i32 { continue; }
+        if screen_y < 0 || screen_y >= H as i32 {
+            continue;
+        }
 
         for sx in 0..sprite.w {
             let screen_x = start_x + sx as i32;
-            if screen_x < 0 || screen_x >= W as i32 { continue; }
+            if screen_x < 0 || screen_x >= W as i32 {
+                continue;
+            }
 
             let pixel = sprite.pixels[sy * sprite.w + sx];
 
@@ -140,6 +160,6 @@ fn draw_sprite(buf: &mut [u32], rx: f32, ry: f32, sprite: &crate::ecs::Sprite) {
     }
 }
 
-fn check_aabb( ax: f32, ay: f32, aw: f32, ah: f32, bx: f32, by: f32, bw: f32, bh: f32) -> bool {
+fn check_aabb(ax: f32, ay: f32, aw: f32, ah: f32, bx: f32, by: f32, bw: f32, bh: f32) -> bool {
     ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by
 }
